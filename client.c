@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/capability.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
@@ -10,21 +11,25 @@
 #include <arpa/inet.h>
 
 int main(int argc, char* argv[]) {
-    int sock = 0;
-    struct sockaddr_in addr;
+    cap_t caps = cap_get_proc();
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf("Socket not created \n");
-        return 1;
+    cap_clear(caps);
+    cap_set_proc(caps);
+    cap_free(caps);
+
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        printf("Failed to create socket\n");
+        return -1;
     }
 
+    struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(1514);
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-    if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        printf("Connection failed due to port and ip problems\n");
-        return 1;
+    if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) != 0) {
+        printf("Failed to connect to server\n");
+        return -2;
     }
 
     while (1) {
@@ -38,7 +43,7 @@ int main(int argc, char* argv[]) {
         printf("%s\n", res);
 
         if (n < 0) {
-            printf("Standard input error \n");
+            printf("Standard input error\n");
         }
 
         sleep(1);

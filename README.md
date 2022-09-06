@@ -16,39 +16,37 @@ gcc -o settime settime.c -z noexecstack -fstack-protector-all -D_GNU_SOURCE -lca
 
 Set the appropriate capabilities. `sudo setcap cap_sys_time+ep settime`
 
-Create the configuration file in `/etc/secureclock.conf` with the server port.
+*Optionnal*  
+To get the time remotely, the configuration file in `/etc/secureclock.conf` must be created with the server port.
 
 ```
 1514
 ```
 
-## Overview
+## Examples
 
-Get the current time :
-```
-Instance c[li]/s[erver]/e[xit]: c
-Method s[et]/g[et]: g
-Format string:
-> y/M/D H:I:S
-2022/07/25 15:18:16
 ```
 
-Update your local time:
-```
-Instance c[li]/s[erver]/e[xit]: c
-Method s[et]/g[et]: s
-Date string `y-m-d h:i:s`: 2022-06-14 08:00:00
-Date successfully updated
-```
+    ┌─────────────────────┐
+    │ Secure Clock v1.1.0 │
+    └─────────────────────┘
 
-Start your server and get the time remotely:
-```
-Instance c[li]/s[erver]/e[xit]: s
-Server running on port 1514...
+§ help
+ > help : Display the list of commands and arguments description.
+ > exit : Exit the program.
+ > get  : Get the local time in a specific format.
+ > set  : Update the local time.
+ > up   : Start the local server.
+ > kill : Stop the local server.
 
-# In another shell
-./client y/M/D
-2022/06/14
-2022/06/14
-2022/06/14
+§ set 2022-02-03 12:23:25
+    Success update date
+
+§ get D/M/y H:I, ok ?
+    06/09/2022 19:06, ok ?
+
+§ help help
+ > help [ COMMAND ]
+ # Display help for available commands.
+ # COMMAND: optionnal parameter
 ```
